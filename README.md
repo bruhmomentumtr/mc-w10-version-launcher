@@ -1,27 +1,71 @@
-# MCLauncher
+# MCLauncher (Fork)
 
-This tool allows you to install several versions of Minecraft: Windows 10 Edition (Bedrock) side-by-side.
-This is useful if you want to test beta versions, releases or anything else side-by-side without needing to uninstall and reinstall the game.
+Bu araç, Minecraft: Windows 10 Edition (Bedrock) oyununun birden fazla sürümünü yan yana kurmanıza olanak tanır.
 
-## Disclaimer
-This tool will **not** help you to pirate the game; it requires that you have a Microsoft account which can be used to download Minecraft from the Store.
+> **Not:** Bu, [MCMrARM/mc-w10-version-launcher](https://github.com/MCMrARM/mc-w10-version-launcher) projesinin fork'udur.
 
-## Prerequisites
-- A Microsoft account connected to Microsoft Store which **owns Minecraft for Windows 10**
-- **Administrator permissions** on your user account (or access to an account that has)
-- **Developer mode** enabled for app installation in Windows 10 Settings
-- If you want to be able to use beta versions, you'll additionally need to **subscribe to the Minecraft Beta program using Xbox Insider Hub**.
-- [Microsoft Visual C++ Redistributable](https://aka.ms/vs/16/release/vc_redist.x64.exe) installed.
+## 🆕 Bu Fork'taki Değişiklikler
 
-## Setup
-- Download the latest release from the [Releases](https://github.com/MCMrARM/mc-w10-version-launcher/releases) section. Unzip it somewhere.
-- Run `MCLauncher.exe` to start the launcher.
+- ✅ **Pure C# Build** - C++ WUTokenHelper bağımlılığı kaldırıldı
+- ✅ **.NET 10** - Modern SDK-style proje formatı
+- ✅ **Tek EXE** - `dotnet publish` ile tek dosya çıktısı
+- ✅ **GameStorageManager** - İndirmeler `DownloadedMCAppx` klasöründe
+- ✅ **Türkçe Arayüz** - İndirme/silme dialogları Türkçe
+- ✅ **Gelişmiş Silme** - Tamamen sil veya sadece listeden çıkar seçenekleri
 
-## Compiling the launcher yourself
-You'll need Visual Studio with Windows 10 SDK version 10.0.17763 and .NET Framework 4.6.1 SDK installed. You can find these in the Visual Studio Installer if you don't have them out of the box.
-The project should build out of the box with VS as long as you haven't done anything bizarre.
+## Uyarı
+Bu araç oyunu **korsanlamanıza yardımcı olmaz**; Minecraft'ı Store'dan indirebilecek bir Microsoft hesabınız olması gerekir.
 
-## Frequently Asked Questions
-**Does this allow running multiple instances of Minecraft: Bedrock at the same time?**
+## Gereksinimler
+- **Minecraft for Windows 10** sahibi Microsoft hesabı
+- **Yönetici izinleri**
+- Windows 10 Ayarları'nda **Geliştirici modu** etkin
+- Beta sürümler için **Xbox Insider Hub** aboneliği
 
-At the time of writing, no. It allows you to _install_ multiple versions, but only one version can run at a time.
+## Kurulum
+1. [Releases](https://github.com/bruhmomentumtr/mc-w10-version-launcher/releases) sayfasından son sürümü indirin
+2. `MCLauncher.exe` dosyasını çalıştırın
+
+## Kendiniz Derlemek İçin
+
+### Gereksinimler
+- .NET 10 SDK
+
+### Derleme
+
+```powershell
+# Debug build
+dotnet build MCLauncher/MCLauncher.csproj
+
+# Tek EXE çıktısı (self-contained)
+dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+
+# Küçük EXE (.NET runtime gerekli)
+dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true
+```
+
+Veya `bat/` klasöründeki scriptleri kullanabilirsiniz:
+- `build-release.bat` - Tek EXE (~150 MB)
+- `build-small.bat` - Küçük EXE (~20 MB, .NET gerekli)
+- `build-debug.bat` - Debug build
+
+## Dosya Yapısı
+
+```
+MCLauncher.exe
+└── DownloadedMCAppx/           ← İndirilen oyunlar
+    ├── versions_index.json     ← Sürüm index'i
+    ├── Minecraft-1.20.0/       ← Oyun dosyaları
+    ├── Minecraft-1.19.0/
+    └── ...
+```
+
+## SSS
+
+**Aynı anda birden fazla Minecraft çalıştırabilir miyim?**
+
+Hayır. Birden fazla sürüm _kurabilirsiniz_, ancak aynı anda yalnızca biri çalışabilir.
+
+## Lisans
+
+Orijinal proje lisansına tabidir.
