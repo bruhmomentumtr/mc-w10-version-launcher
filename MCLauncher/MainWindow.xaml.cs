@@ -683,6 +683,48 @@ namespace MCLauncher
                     _hasLaunchTask = false;
                     return;
                 }
+
+                // Auto-switch: Check if a different version is currently registered
+                try
+                {
+                    var packageManager = new PackageManager();
+                    var installedPackages = packageManager.FindPackages(v.GamePackageFamily);
+                    var installedPackage = installedPackages.FirstOrDefault();
+
+                    if (installedPackage != null)
+                    {
+                        string installedPath = GetPackagePath(installedPackage);
+                        string requestedPath = Path.GetFullPath(v.GameDirectory);
+
+                        // If different version is registered, unregister it first
+                        if (!string.Equals(installedPath, requestedPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string installedVersion = installedPackage.Id.FullName;
+                            Debug.WriteLine($"Auto-switch: Unregistering {installedVersion} to launch {v.DisplayName}");
+
+                            v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Unregistering);
+
+                            try
+                            {
+                                await packageManager.RemovePackageAsync(installedPackage.Id.FullName,
+                                    RemovalOptions.PreserveApplicationData | RemovalOptions.RemoveForAllUsers)
+                                    .AsTask();
+                                Debug.WriteLine("Auto-switch: Previous version unregistered successfully");
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Auto-switch: Failed to unregister previous version: " + ex.ToString());
+                                // Continue anyway, ReRegisterPackage may still work
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Auto-switch: Error checking installed packages: " + e.ToString());
+                    // Continue anyway
+                }
+
                 v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Registering);
                 string gameDir = Path.GetFullPath(v.GameDirectory);
                 try
