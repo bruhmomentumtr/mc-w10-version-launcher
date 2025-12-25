@@ -1,24 +1,27 @@
 @echo off
+
 echo ========================================
 echo   MCLauncher - Debug Build
 echo ========================================
 echo.
 
+:: Get script directory and navigate to project root
 cd /d "%~dp0.."
+set "CSPROJ=MCLauncher\MCLauncher.csproj"
 
 echo Building debug version...
-dotnet build MCLauncher/MCLauncher.csproj -c Debug
+dotnet build "%CSPROJ%" -c Debug
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [HATA] Build basarisiz!
+    echo [ERROR] Build failed!
     pause
     exit /b 1
 )
 
 echo.
 echo ========================================
-echo   BUILD TAMAMLANDI!
+echo   BUILD COMPLETE!
 echo ========================================
 echo.
 

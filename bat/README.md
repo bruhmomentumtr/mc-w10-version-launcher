@@ -1,30 +1,31 @@
 # MCLauncher Build Scripts
 
-Bu klasörde MCLauncher için build scriptleri bulunmaktadır.
+Build scripts for the MCLauncher project.
 
-## Scriptler
+## Scripts
 
-| Script | Açıklama | Boyut | Gereksinim |
-|--------|----------|-------|------------|
-| `build-release.bat` | Self-contained tek EXE | ~150-160 MB | Yok |
-| `build-small.bat` | Framework-dependent EXE | ~15-20 MB | .NET 10 Runtime |
-| `build-trimmed.bat` | Trimmed tek EXE | ~80-100 MB | Yok (riskli) |
+| Script | Description | Output Size | Requirements |
+|--------|-------------|-------------|--------------|
+| `build-release.bat` | Self-contained single EXE | ~150-160 MB | None |
+| `build-small.bat` | Framework-dependent EXE | ~15-20 MB | .NET Runtime |
+| `build-trimmed.bat` | Trimmed single EXE | ~80-100 MB | None (risky) |
 | `build-debug.bat` | Debug build | - | - |
-| `clean.bat` | Temizlik | - | - |
+| `clean.bat` | Clean build artifacts | - | - |
 
-## Kullanım
+## Usage
 
-1. İstediğiniz `.bat` dosyasına çift tıklayın
-2. Build tamamlanınca çıktı konumu gösterilecek
+1. Double-click any `.bat` file
+2. Wait for build to complete
+3. Output location will be displayed
 
-## Çıktı Konumu
+## Features
 
-```
-MCLauncher\bin\Release\net10.0-windows10.0.17763.0\win-x64\publish\MCLauncher.exe
-```
+- **Auto-detects target framework** from `.csproj`
+- **Shows file size** after build
+- **Portable** - works regardless of .NET version
 
-## Notlar
+## Notes
 
-- **build-release.bat**: En güvenli seçenek, her yerde çalışır
-- **build-small.bat**: Küçük boyut ama hedefte .NET 10 gerekli
-- **build-trimmed.bat**: En küçük ama WPF/WinRT sorunları çıkabilir
+- **build-release.bat**: Most reliable, works everywhere
+- **build-small.bat**: Smaller but requires .NET Runtime on target
+- **build-trimmed.bat**: Smallest but may have WPF/WinRT issues

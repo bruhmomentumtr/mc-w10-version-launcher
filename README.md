@@ -17,37 +17,46 @@ This tool allows you to install multiple versions of Minecraft: Windows 10 Editi
 This tool will **not** help you to pirate the game; it requires that you have a Microsoft account which can be used to download Minecraft from the Store.
 
 ## Prerequisites
-- A Microsoft account connected to Microsoft Store which **owns Minecraft for Windows 10**
-- **Administrator permissions** on your user account
+- Microsoft account that **owns Minecraft for Windows 10**
+- **Administrator permissions**
 - **Developer mode** enabled in Windows Settings
-- For beta versions, **Xbox Insider Hub** subscription required
+- For beta versions: **Xbox Insider Hub** subscription
 
 ## Setup
-1. Download the latest release from the [Releases](https://github.com/bruhmomentumtr/mc-w10-version-launcher/releases) page
-2. Run `MCLauncher.exe` to start the launcher
+1. Download from [Releases](https://github.com/bruhmomentumtr/mc-w10-version-launcher/releases)
+2. Run `MCLauncher.exe`
 
 ## Building from Source
 
 ### Requirements
-- .NET 10 SDK
+- .NET 10 SDK (or version matching `TargetFramework` in `.csproj`)
 
-### Build Commands
+### Using Batch Scripts
+
+The `bat/` folder contains ready-to-use build scripts:
+
+| Script | Description | Output Size | Requirements |
+|--------|-------------|-------------|--------------|
+| `build-release.bat` | Self-contained single EXE | ~150 MB | None |
+| `build-small.bat` | Framework-dependent EXE | ~20 MB | .NET Runtime |
+| `build-trimmed.bat` | Trimmed EXE (experimental) | ~100 MB | None |
+| `build-debug.bat` | Debug build | - | - |
+| `clean.bat` | Clean artifacts | - | - |
+
+Scripts auto-detect target framework from `.csproj`.
+
+### Manual Build
 
 ```powershell
-# Debug build
+# Debug
 dotnet build MCLauncher/MCLauncher.csproj
 
-# Single EXE (self-contained, ~150MB)
+# Release (self-contained)
 dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 
-# Smaller EXE (requires .NET runtime, ~20MB)
+# Release (small, requires .NET)
 dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true
 ```
-
-Or use the batch scripts in the `bat/` folder:
-- `build-release.bat` - Single EXE (~150 MB)
-- `build-small.bat` - Small EXE (~20 MB, requires .NET)
-- `build-debug.bat` - Debug build
 
 ## File Structure
 
@@ -56,15 +65,13 @@ MCLauncher.exe
 └── DownloadedMCAppx/           ← Downloaded games
     ├── versions_index.json     ← Version index
     ├── Minecraft-1.20.0/       ← Game files
-    ├── Minecraft-1.19.0/
     └── ...
 ```
 
 ## FAQ
 
-**Can I run multiple Minecraft instances at the same time?**
-
-No. You can _install_ multiple versions, but only one can run at a time.
+**Can I run multiple instances at the same time?**
+No. You can install multiple versions, but only one can run at a time.
 
 ## License
 

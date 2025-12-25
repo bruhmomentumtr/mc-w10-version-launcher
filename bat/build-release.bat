@@ -1,16 +1,26 @@
 @echo off
+setlocal enabledelayedexpansion
+
 echo ========================================
-echo   MCLauncher - Tek EXE Build Script
+echo   MCLauncher - Single EXE Build Script
 echo ========================================
 echo.
 
+:: Get script directory and navigate to project root
 cd /d "%~dp0.."
+set "PROJECT_ROOT=%cd%"
+set "CSPROJ=MCLauncher\MCLauncher.csproj"
 
-echo [1/2] Temizleniyor...
-dotnet clean MCLauncher/MCLauncher.csproj -c Release -v quiet
+:: Detect target framework from csproj
+for /f "tokens=2 delims=<>" %%a in ('findstr /i "TargetFramework" "%CSPROJ%"') do set "TFM=%%a"
+echo Detected Target Framework: %TFM%
+echo.
 
-echo [2/2] Release build aliniyor...
-dotnet publish MCLauncher/MCLauncher.csproj ^
+echo [1/2] Cleaning...
+dotnet clean "%CSPROJ%" -c Release -v quiet
+
+echo [2/2] Building Release (self-contained single file)...
+dotnet publish "%CSPROJ%" ^
     -c Release ^
     -r win-x64 ^
     --self-contained true ^
@@ -20,26 +30,34 @@ dotnet publish MCLauncher/MCLauncher.csproj ^
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [HATA] Build basarisiz!
+    echo [ERROR] Build failed!
     pause
     exit /b 1
 )
 
 echo.
 echo ========================================
-echo   BUILD TAMAMLANDI!
+echo   BUILD COMPLETE!
 echo ========================================
 echo.
-echo Cikti dosyasi:
-echo   MCLauncher\bin\Release\net10.0-windows10.0.17763.0\win-x64\publish\MCLauncher.exe
-echo.
 
-:: Dosya boyutunu goster
-for %%A in ("MCLauncher\bin\Release\net10.0-windows10.0.17763.0\win-x64\publish\MCLauncher.exe") do (
-    set size=%%~zA
-    set /a sizeMB=%%~zA / 1048576
+:: Find output path
+set "OUTPUT_DIR=MCLauncher\bin\Release\%TFM%\win-x64\publish"
+set "OUTPUT_EXE=%OUTPUT_DIR%\MCLauncher.exe"
+
+if exist "%OUTPUT_EXE%" (
+    echo Output file:
+    echo   %PROJECT_ROOT%\%OUTPUT_EXE%
+    echo.
+    
+    :: Show file size
+    for %%A in ("%OUTPUT_EXE%") do (
+        set /a "SIZE_MB=%%~zA / 1048576"
+        echo Size: !SIZE_MB! MB
+    )
+) else (
+    echo Output directory: %OUTPUT_DIR%
 )
-echo Boyut: %sizeMB% MB
-echo.
 
+echo.
 pause
