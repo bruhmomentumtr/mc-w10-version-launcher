@@ -1188,6 +1188,77 @@ namespace MCLauncher
 
         private void InvokeDownload(Version v)
         {
+            // Check for existing registered Minecraft version
+            var storage = GameStorageManager.Instance;
+
+            try
+            {
+                var packageManager = new PackageManager();
+                var installedPackages = packageManager.FindPackages(v.GamePackageFamily);
+                var installedPackage = installedPackages.FirstOrDefault();
+
+                if (installedPackage != null)
+                {
+                    string installedVersion = installedPackage.Id.FullName;
+                    var result = MessageBox.Show(
+                        $"⚠️ A previously installed Minecraft version was found!\n\n" +
+                        $"Installed version:\n{installedVersion}\n\n" +
+                        $"Version you want to download:\n{v.DisplayName}\n\n" +
+                        "─────────────────────────────────────\n\n" +
+                        "Do you want to unregister the existing version from Windows?\n\n" +
+                        "• YES = Unregister existing version and download new one\n" +
+                        "• NO = Continue without unregistering (not recommended)\n" +
+                        "• CANCEL = Cancel download",
+                        "Existing Installation Found",
+                        MessageBoxButton.YesNoCancel,
+                        MessageBoxImage.Warning
+                    );
+
+                    if (result == MessageBoxResult.Cancel)
+                    {
+                        Debug.WriteLine("User cancelled download - existing installation found");
+                        return;
+                    }
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        // Remove existing version from Windows
+                        Debug.WriteLine("Removing existing registered package: " + installedVersion);
+                        try
+                        {
+                            packageManager.RemovePackageAsync(installedPackage.Id.FullName,
+                                RemovalOptions.PreserveApplicationData | RemovalOptions.RemoveForAllUsers)
+                                .AsTask().GetAwaiter().GetResult();
+
+                            MessageBox.Show(
+                                $"✅ Existing version unregistered from Windows.\n\nNow downloading the new version.",
+                                "Unregistration Successful",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Failed to remove existing package: " + ex.ToString());
+                            var continueAnyway = MessageBox.Show(
+                                $"Failed to unregister existing version:\n{ex.Message}\n\nDo you want to continue downloading anyway?",
+                                "Unregistration Failed",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Warning
+                            );
+
+                            if (continueAnyway == MessageBoxResult.No)
+                                return;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Error checking for existing installations: " + e.ToString());
+                // Continue if error occurs, not critical
+            }
+
             CancellationTokenSource cancelSource = new CancellationTokenSource();
             v.IsNew = false;
             v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Initializing);
@@ -1256,17 +1327,17 @@ namespace MCLauncher
                 }
                 try
                 {
-                    // İndirme tamamlandı - kullanıcıya ne yapmak istediğini sor
+                    // Download complete - ask user what to do
                     var result = await Dispatcher.InvokeAsync(() =>
                     {
                         return MessageBox.Show(
-                            $"'{v.Name}' sürümü başarıyla indirildi!\n\n" +
-                            $"Dosya konumu: {dlPath}\n\n" +
-                            "Ne yapmak istersiniz?\n\n" +
-                            "• Evet = Klasöre aç ve Windows'a kaydet (normal kurulum)\n" +
-                            "• Hayır = Sadece klasöre aç (kaydetme)\n" +
-                            "• İptal = Sadece paketi sakla (açma)",
-                            "İndirme Tamamlandı",
+                            $"'{v.Name}' downloaded successfully!\n\n" +
+                            $"File location: {dlPath}\n\n" +
+                            "What would you like to do?\n\n" +
+                            "• Yes = Extract to folder and register with Windows (normal install)\n" +
+                            "• No = Extract to folder only (don't register)\n" +
+                            "• Cancel = Keep package file only (don't extract)",
+                            "Download Complete",
                             MessageBoxButton.YesNoCancel,
                             MessageBoxImage.Question
                         );
@@ -1274,13 +1345,13 @@ namespace MCLauncher
 
                     if (result == MessageBoxResult.Cancel)
                     {
-                        // Sadece paketi sakla, hiçbir şey yapma
+                        // Just keep the package, do nothing
                         Debug.WriteLine("User chose to keep package only without extraction");
                         await Dispatcher.InvokeAsync(() =>
                         {
                             MessageBox.Show(
-                                $"Paket dosyası saklandı:\n{dlPath}\n\nBu dosyayı daha sonra manuel olarak kurabilirsiniz.",
-                                "Paket Saklandı",
+                                $"Package file saved:\n{dlPath}\n\nYou can manually install this file later.",
+                                "Package Saved",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information
                             );
@@ -1309,7 +1380,7 @@ namespace MCLauncher
 
                     if (shouldRegister)
                     {
-                        // Windows'a kaydet
+                        // Register with Windows
                         Debug.WriteLine("Registering package with Windows");
                         v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Registering);
                         string gameDir = Path.GetFullPath(v.GameDirectory);
@@ -1317,8 +1388,8 @@ namespace MCLauncher
                         await Dispatcher.InvokeAsync(() =>
                         {
                             MessageBox.Show(
-                                $"'{v.Name}' başarıyla kuruldu ve Windows'a kaydedildi!",
-                                "Kurulum Tamamlandı",
+                                $"'{v.Name}' installed and registered with Windows successfully!",
+                                "Installation Complete",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information
                             );
@@ -1326,13 +1397,13 @@ namespace MCLauncher
                     }
                     else
                     {
-                        // Sadece klasöre aç
+                        // Extract to folder only
                         Debug.WriteLine("Extracted to folder only, not registering");
                         await Dispatcher.InvokeAsync(() =>
                         {
                             MessageBox.Show(
-                                $"'{v.Name}' klasöre açıldı:\n{dirPath}\n\nNot: Windows'a kaydedilmedi, 'Launch' butonu ile başlatıldığında kaydedilecektir.",
-                                "Açma Tamamlandı",
+                                $"'{v.Name}' extracted to folder:\n{dirPath}\n\nNote: Not registered with Windows. Will be registered when launched via 'Launch' button.",
+                                "Extraction Complete",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information
                             );
@@ -1370,22 +1441,22 @@ namespace MCLauncher
         {
             try
             {
-                // Kullanıcıya ne yapmak istediğini sor
+                // Ask user what they want to do
                 var result = await Dispatcher.InvokeAsync(() =>
                 {
                     return MessageBox.Show(
-                        $"'{v.DisplayName}' sürümünü nasıl kaldırmak istiyorsunuz?\n\n" +
+                        $"How would you like to remove '{v.DisplayName}'?\n\n" +
                         "─────────────────────────────────────\n\n" +
-                        "🗑️ EVET = Tamamen Sil\n" +
-                        "   • Windows'tan kaldır\n" +
-                        "   • Tüm dosyaları sil\n" +
-                        "   • Listeden çıkar\n\n" +
-                        "📋 HAYIR = Sadece Listeden Çıkar\n" +
-                        "   • Windows'tan kaldır\n" +
-                        "   • Dosyalar yerinde kalsın\n" +
-                        "   • Tekrar kurulabilir\n\n" +
-                        "❌ İPTAL = Vazgeç",
-                        "Sürüm Kaldırma",
+                        "🗑️ YES = Delete Completely\n" +
+                        "   • Unregister from Windows\n" +
+                        "   • Delete all files\n" +
+                        "   • Remove from list\n\n" +
+                        "📋 NO = Unregister Only\n" +
+                        "   • Unregister from Windows\n" +
+                        "   • Keep files on disk\n" +
+                        "   • Can be reinstalled\n\n" +
+                        "❌ CANCEL = Cancel",
+                        "Remove Version",
                         MessageBoxButton.YesNoCancel,
                         MessageBoxImage.Question
                     );
@@ -1402,7 +1473,7 @@ namespace MCLauncher
                 v.StateChangeInfo = new VersionStateChangeInfo(VersionState.Unregistering);
                 Debug.WriteLine("Unregistering version " + v.DisplayName);
 
-                // Windows'tan kaldır (kayıtlıysa)
+                // Unregister from Windows (if registered)
                 try
                 {
                     await UnregisterPackage(v.GamePackageFamily, v, skipBackup: !shouldDeleteFiles);
@@ -1410,16 +1481,16 @@ namespace MCLauncher
                 catch (Exception e)
                 {
                     Debug.WriteLine("Failed unregistering package:\n" + e.ToString());
-                    // Eğer zaten kayıtlı değilse hata verme, devam et
-                    if (!e.Message.Contains("not found") && !e.Message.Contains("bulunamadı"))
+                    // If not registered, don't show error, continue
+                    if (!e.Message.Contains("not found"))
                     {
-                        MessageBox.Show("Windows'tan kaldırma başarısız:\n" + e.ToString(), "Hata");
+                        MessageBox.Show("Failed to unregister from Windows:\n" + e.ToString(), "Error");
                     }
                 }
 
                 if (shouldDeleteFiles)
                 {
-                    // Tamamen sil: dosyalar + listeden çıkar
+                    // Delete completely: files + remove from list
                     Debug.WriteLine("Cleaning up game files for version " + v.DisplayName);
                     v.StateChangeInfo = new VersionStateChangeInfo(VersionState.CleaningUp);
 
@@ -1433,7 +1504,7 @@ namespace MCLauncher
                     catch (Exception e)
                     {
                         Debug.WriteLine("Failed deleting game directory:\n" + e.ToString());
-                        MessageBox.Show("Dosyalar silinemedi:\n" + e.ToString(), "Hata");
+                        MessageBox.Show("Failed to delete files:\n" + e.ToString(), "Error");
                         return false;
                     }
 
@@ -1446,18 +1517,18 @@ namespace MCLauncher
                         v.UpdateInstallStatus();
                     }
 
-                    // GameStorageManager'dan sürümü kaldır
+                    // Remove version from GameStorageManager
                     string folderName = Path.GetFileName(v.GameDirectory);
-                    GameStorageManager.Instance.RemoveVersion(folderName, false); // Dosyalar zaten silindi
+                    GameStorageManager.Instance.RemoveVersion(folderName, false); // Files already deleted
 
                     await Dispatcher.InvokeAsync(() =>
                     {
                         MessageBox.Show(
-                            $"✅ '{v.DisplayName}' tamamen silindi.\n\n" +
-                            "• Windows'tan kaldırıldı\n" +
-                            "• Dosyalar silindi\n" +
-                            "• Listeden çıkarıldı",
-                            "Kaldırma Tamamlandı",
+                            $"✅ '{v.DisplayName}' deleted completely.\n\n" +
+                            "• Unregistered from Windows\n" +
+                            "• Files deleted\n" +
+                            "• Removed from list",
+                            "Removal Complete",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information
                         );
@@ -1465,25 +1536,25 @@ namespace MCLauncher
                 }
                 else
                 {
-                    // Sadece listeden çıkar: dosyalar kalsın
+                    // Unregister only: keep files
                     Debug.WriteLine("Unregistered from Windows but kept files for version " + v.DisplayName);
 
                     v.UpdateInstallStatus();
 
-                    // GameStorageManager'da kayıt durumunu güncelle
+                    // Update registration status in GameStorageManager
                     string folderName = Path.GetFileName(v.GameDirectory);
                     GameStorageManager.Instance.SetRegistered(folderName, false);
 
                     await Dispatcher.InvokeAsync(() =>
                     {
                         MessageBox.Show(
-                            $"✅ '{v.DisplayName}' listeden çıkarıldı.\n\n" +
-                            "• Windows'tan kaldırıldı\n" +
-                            "• Dosyalar yerinde:\n" +
+                            $"✅ '{v.DisplayName}' unregistered.\n\n" +
+                            "• Unregistered from Windows\n" +
+                            "• Files still exist at:\n" +
                             $"  {Path.GetFullPath(v.GameDirectory)}\n\n" +
-                            "💡 Bu sürümü tekrar kullanmak için\n" +
-                            "   'Launch' butonuna tıklayın.",
-                            "Listeden Çıkarıldı",
+                            "💡 To use this version again,\n" +
+                            "   click the 'Launch' button.",
+                            "Unregistered",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information
                         );

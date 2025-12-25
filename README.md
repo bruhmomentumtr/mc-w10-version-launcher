@@ -1,71 +1,71 @@
 # MCLauncher (Fork)
 
-Bu araç, Minecraft: Windows 10 Edition (Bedrock) oyununun birden fazla sürümünü yan yana kurmanıza olanak tanır.
+This tool allows you to install multiple versions of Minecraft: Windows 10 Edition (Bedrock) side-by-side.
 
-> **Not:** Bu, [MCMrARM/mc-w10-version-launcher](https://github.com/MCMrARM/mc-w10-version-launcher) projesinin fork'udur.
+> **Note:** This is a fork of [MCMrARM/mc-w10-version-launcher](https://github.com/MCMrARM/mc-w10-version-launcher).
 
-## 🆕 Bu Fork'taki Değişiklikler
+## 🆕 Changes in This Fork
 
-- ✅ **Pure C# Build** - C++ WUTokenHelper bağımlılığı kaldırıldı
-- ✅ **.NET 10** - Modern SDK-style proje formatı
-- ✅ **Tek EXE** - `dotnet publish` ile tek dosya çıktısı
-- ✅ **GameStorageManager** - İndirmeler `DownloadedMCAppx` klasöründe
-- ✅ **Türkçe Arayüz** - İndirme/silme dialogları Türkçe
-- ✅ **Gelişmiş Silme** - Tamamen sil veya sadece listeden çıkar seçenekleri
+- ✅ **Pure C# Build** - Removed C++ WUTokenHelper dependency
+- ✅ **.NET 10** - Modern SDK-style project format
+- ✅ **Single EXE** - Single file output with `dotnet publish`
+- ✅ **GameStorageManager** - Downloads stored in `DownloadedMCAppx` folder
+- ✅ **Improved UX** - Download/removal confirmation dialogs
+- ✅ **Version Detection** - Detects existing installations before download
 
-## Uyarı
-Bu araç oyunu **korsanlamanıza yardımcı olmaz**; Minecraft'ı Store'dan indirebilecek bir Microsoft hesabınız olması gerekir.
+## Disclaimer
+This tool will **not** help you to pirate the game; it requires that you have a Microsoft account which can be used to download Minecraft from the Store.
 
-## Gereksinimler
-- **Minecraft for Windows 10** sahibi Microsoft hesabı
-- **Yönetici izinleri**
-- Windows 10 Ayarları'nda **Geliştirici modu** etkin
-- Beta sürümler için **Xbox Insider Hub** aboneliği
+## Prerequisites
+- A Microsoft account connected to Microsoft Store which **owns Minecraft for Windows 10**
+- **Administrator permissions** on your user account
+- **Developer mode** enabled in Windows Settings
+- For beta versions, **Xbox Insider Hub** subscription required
 
-## Kurulum
-1. [Releases](https://github.com/bruhmomentumtr/mc-w10-version-launcher/releases) sayfasından son sürümü indirin
-2. `MCLauncher.exe` dosyasını çalıştırın
+## Setup
+1. Download the latest release from the [Releases](https://github.com/bruhmomentumtr/mc-w10-version-launcher/releases) page
+2. Run `MCLauncher.exe` to start the launcher
 
-## Kendiniz Derlemek İçin
+## Building from Source
 
-### Gereksinimler
+### Requirements
 - .NET 10 SDK
 
-### Derleme
+### Build Commands
 
 ```powershell
 # Debug build
 dotnet build MCLauncher/MCLauncher.csproj
 
-# Tek EXE çıktısı (self-contained)
+# Single EXE (self-contained, ~150MB)
 dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
 
-# Küçük EXE (.NET runtime gerekli)
+# Smaller EXE (requires .NET runtime, ~20MB)
 dotnet publish MCLauncher/MCLauncher.csproj -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true
 ```
 
-Veya `bat/` klasöründeki scriptleri kullanabilirsiniz:
-- `build-release.bat` - Tek EXE (~150 MB)
-- `build-small.bat` - Küçük EXE (~20 MB, .NET gerekli)
+Or use the batch scripts in the `bat/` folder:
+- `build-release.bat` - Single EXE (~150 MB)
+- `build-small.bat` - Small EXE (~20 MB, requires .NET)
 - `build-debug.bat` - Debug build
 
-## Dosya Yapısı
+## File Structure
 
 ```
 MCLauncher.exe
-└── DownloadedMCAppx/           ← İndirilen oyunlar
-    ├── versions_index.json     ← Sürüm index'i
-    ├── Minecraft-1.20.0/       ← Oyun dosyaları
+└── DownloadedMCAppx/           ← Downloaded games
+    ├── versions_index.json     ← Version index
+    ├── Minecraft-1.20.0/       ← Game files
     ├── Minecraft-1.19.0/
     └── ...
 ```
 
-## SSS
+## FAQ
 
-**Aynı anda birden fazla Minecraft çalıştırabilir miyim?**
+**Can I run multiple Minecraft instances at the same time?**
 
-Hayır. Birden fazla sürüm _kurabilirsiniz_, ancak aynı anda yalnızca biri çalışabilir.
+No. You can _install_ multiple versions, but only one can run at a time.
 
-## Lisans
+## License
 
-Orijinal proje lisansına tabidir.
+Subject to the original project's license.
