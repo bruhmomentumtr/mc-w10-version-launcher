@@ -1,28 +1,19 @@
-﻿<Window x:Class="MCLauncher.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MCLauncher.WPFDataTypes"
-        mc:Ignorable="d"
-        Title="Minecraft Version Manager" Height="450" Width="800">
+﻿<Window
+    x:Class="MCLauncher.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MCLauncher.WPFDataTypes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Minecraft Version Manager"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
     <Window.Resources>
-        <CollectionViewSource
-            x:Key="versionListViewRelease"
-            IsLiveFilteringRequested="True"
-        />
-        <CollectionViewSource
-            x:Key="versionListViewBeta"
-            IsLiveFilteringRequested="True"
-        />
-        <CollectionViewSource
-            x:Key="versionListViewPreview"
-            IsLiveFilteringRequested="True"
-        />
-        <CollectionViewSource
-            x:Key="versionListViewImported"
-            IsLiveFilteringRequested="True"
-        />
+        <CollectionViewSource x:Key="versionListViewRelease" IsLiveFilteringRequested="True" />
+        <CollectionViewSource x:Key="versionListViewBeta" IsLiveFilteringRequested="True" />
+        <CollectionViewSource x:Key="versionListViewPreview" IsLiveFilteringRequested="True" />
+        <CollectionViewSource x:Key="versionListViewImported" IsLiveFilteringRequested="True" />
         <DataTemplate x:Key="templateVersionNotInstalled" DataType="{x:Type local:Version}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -33,9 +24,24 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding DisplayName}" FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding DisplayInstallStatus}" />
-                <Button x:Name="DownloadButton" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Padding="20,0" Content="Download" Command="{Binding DownloadCommand}" CommandParameter="{Binding}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    FontWeight="Bold"
+                    Text="{Binding DisplayName}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding DisplayInstallStatus}" />
+                <Button
+                    x:Name="DownloadButton"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Padding="20,0"
+                    Command="{Binding DownloadCommand}"
+                    CommandParameter="{Binding}"
+                    Content="Download" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="templateVersionInstalled" DataType="{x:Type local:Version}">
@@ -49,10 +55,34 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding DisplayName}" FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding DisplayInstallStatus}" />
-                <Button x:Name="RemoveButton" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Padding="20,0" Content="Remove" Command="{Binding RemoveCommand}" CommandParameter="{Binding}" />
-                <Button x:Name="DownloadButton" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Padding="20,0" Margin="2,0,0,0" Content="Launch" Command="{Binding LaunchCommand}" CommandParameter="{Binding}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    FontWeight="Bold"
+                    Text="{Binding DisplayName}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding DisplayInstallStatus}" />
+                <Button
+                    x:Name="RemoveButton"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Padding="20,0"
+                    Command="{Binding RemoveCommand}"
+                    CommandParameter="{Binding}"
+                    Content="Remove" />
+                <Button
+                    x:Name="DownloadButton"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Margin="2,0,0,0"
+                    Padding="20,0"
+                    Command="{Binding LaunchCommand}"
+                    CommandParameter="{Binding}"
+                    Content="Launch" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="templateVersionDownloading" DataType="{x:Type local:Version}">
@@ -66,26 +96,53 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding DisplayName}" FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding StateChangeInfo.DisplayStatus}" />
-                <Canvas Name="progressSizeHack" Grid.Row="2" Grid.Column="0" Height="12">
-                    <ProgressBar Width="{Binding Path=ActualWidth, ElementName=progressSizeHack, Mode=OneWay}" Height="{Binding Path=ActualHeight, ElementName=progressSizeHack, Mode=OneWay}" Minimum="0" Maximum="{Binding StateChangeInfo.MaxProgress}" Value="{Binding StateChangeInfo.Progress}" IsIndeterminate="{Binding StateChangeInfo.IsProgressIndeterminate}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    FontWeight="Bold"
+                    Text="{Binding DisplayName}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="{Binding StateChangeInfo.DisplayStatus}" />
+                <Canvas
+                    Name="progressSizeHack"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Height="12">
+                    <ProgressBar
+                        Width="{Binding Path=ActualWidth, ElementName=progressSizeHack, Mode=OneWay}"
+                        Height="{Binding Path=ActualHeight, ElementName=progressSizeHack, Mode=OneWay}"
+                        IsIndeterminate="{Binding StateChangeInfo.IsProgressIndeterminate}"
+                        Maximum="{Binding StateChangeInfo.MaxProgress}"
+                        Minimum="0"
+                        Value="{Binding StateChangeInfo.Progress}" />
                 </Canvas>
-                <Button Grid.Row="2" Grid.Column="1" Content="X" Width="20" Margin="10 0 0 0" Command="{Binding StateChangeInfo.CancelCommand}" />
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Width="20"
+                    Margin="10,0,0,0"
+                    Command="{Binding StateChangeInfo.CancelCommand}"
+                    Content="X" />
             </Grid>
         </DataTemplate>
         <ControlTemplate x:Key="templateVersionList" TargetType="ContentControl">
-            <ListBox ItemsSource="{Binding}" HorizontalContentAlignment="Stretch">
+            <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <ContentControl x:Name="control" Content="{Binding}" ContentTemplate="{StaticResource templateVersionNotInstalled}" Background="LightBlue"/>
+                        <ContentControl
+                            x:Name="control"
+                            Background="LightBlue"
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource templateVersionNotInstalled}" />
 
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                <Setter TargetName="control" Property="ContentTemplate" Value="{StaticResource templateVersionInstalled}"/>
+                                <Setter TargetName="control" Property="ContentTemplate" Value="{StaticResource templateVersionInstalled}" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsStateChanging}" Value="True">
-                                <Setter TargetName="control" Property="ContentTemplate" Value="{StaticResource templateVersionDownloading}"/>
+                                <Setter TargetName="control" Property="ContentTemplate" Value="{StaticResource templateVersionDownloading}" />
                             </DataTrigger>
                         </DataTemplate.Triggers>
 
@@ -97,56 +154,166 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" IsMainMenu="True" Background="Transparent">
+        <Menu
+            Grid.Row="0"
+            Background="Transparent"
+            IsMainMenu="True">
             <MenuItem Header="_File">
-                <MenuItem Header="Open log file" Click="MenuItemOpenLogFileClicked" />
-                <MenuItem Header="Open launcher data folder in Explorer" Click="MenuItemOpenDataDirClicked"/>
-                <MenuItem Header="_Import .appx or .msixvc..." Click="ImportButtonClicked" />
+                <MenuItem Click="MenuItemOpenLogFileClicked" Header="Open log file" />
+                <MenuItem Click="MenuItemOpenDataDirClicked" Header="Open launcher data folder in Explorer" />
+                <MenuItem Click="ImportButtonClicked" Header="_Import .appx or .msixvc..." />
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="Uninstall all versions" Name="CleanupForMicrosoftStoreReinstall" Click="MenuItemUninstallAllVersionsClicked" />
-                <MenuItem Header="Cleanup for installing Minecraft from Microsoft Store" Name="CleanupForMicrosoftStoreInstall" Click="MenuItemCleanupForStoreInstallClicked" />
-                <MenuItem Header="Refresh version list" Name="RefreshVersionList" Click="MenuItemRefreshVersionListClicked" />
-                <MenuItem Header="Find my Minecraft data" Click="MenuItemFindMyDataClicked" />
+                <MenuItem
+                    Name="CleanupForMicrosoftStoreReinstall"
+                    Click="MenuItemUninstallAllVersionsClicked"
+                    Header="Uninstall all versions" />
+                <MenuItem
+                    Name="CleanupForMicrosoftStoreInstall"
+                    Click="MenuItemCleanupForStoreInstallClicked"
+                    Header="Cleanup for installing Minecraft from Microsoft Store" />
+                <MenuItem
+                    Name="RefreshVersionList"
+                    Click="MenuItemRefreshVersionListClicked"
+                    Header="Refresh version list" />
+                <MenuItem Click="MenuItemFindMyDataClicked" Header="Find my Minecraft data" />
             </MenuItem>
             <MenuItem Header="_Options">
-                <MenuItem Header="Delete installation packages after download to save space" IsCheckable="True" Name="DeleteAppxAfterDownloadOption" Checked="DeleteAppxAfterDownloadCheck_Changed" Unchecked="DeleteAppxAfterDownloadCheck_Changed" IsChecked="{Binding UserPrefs.DeleteAppxAfterDownload }" />
-                <MenuItem Header="Set version data endpoints..." Name="SetVersionListEndpoint" Click="MenuItemSetVersionListEndpointClicked" />
-                <MenuItem Header="Show legacy Beta versions tab" IsCheckable="True" Name="ShowBetaTabOption" Checked="ShowBetaTabOption_Changed" Unchecked="ShowBetaTabOption_Changed" IsChecked="{Binding UserPrefs.ShowLegacyBetaTab}" />
+                <MenuItem
+                    Name="DeleteAppxAfterDownloadOption"
+                    Checked="DeleteAppxAfterDownloadCheck_Changed"
+                    Header="Delete installation packages after download to save space"
+                    IsCheckable="True"
+                    IsChecked="{Binding UserPrefs.DeleteAppxAfterDownload}"
+                    Unchecked="DeleteAppxAfterDownloadCheck_Changed" />
+                <MenuItem
+                    Name="SetVersionListEndpoint"
+                    Click="MenuItemSetVersionListEndpointClicked"
+                    Header="Set version data endpoints..." />
+                <MenuItem
+                    Name="ShowBetaTabOption"
+                    Checked="ShowBetaTabOption_Changed"
+                    Header="Show legacy Beta versions tab"
+                    IsCheckable="True"
+                    IsChecked="{Binding UserPrefs.ShowLegacyBetaTab}"
+                    Unchecked="ShowBetaTabOption_Changed" />
             </MenuItem>
         </Menu>
-        <TabControl x:Name="VersionTabs" Grid.Row="1" Margin="0,5,0,0" BorderThickness="0,1,0,0" Padding="0" Width="Auto">
-            <TabItem Header="Release" x:Name="ReleaseTab">
-                <ContentControl x:Name="ReleaseVersionList" d:DataContext="{d:DesignData /SampleData/Versions.xaml}" Template="{StaticResource templateVersionList}" Margin="5" />
+
+        <!--  Search Box  -->
+        <Grid Grid.Row="1" Margin="5,5,5,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                x:Name="SearchBox"
+                Height="25"
+                VerticalContentAlignment="Center"
+                Tag="🔍 Search versions..."
+                TextChanged="SearchBox_TextChanged" />
+            <TextBlock
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Foreground="Gray"
+                IsHitTestVisible="False"
+                Text="{Binding Tag, ElementName=SearchBox}">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+
+        <TabControl
+            x:Name="VersionTabs"
+            Grid.Row="2"
+            Width="Auto"
+            Margin="0,5,0,0"
+            Padding="0"
+            BorderThickness="0,1,0,0">
+            <TabItem x:Name="ReleaseTab" Header="Release">
+                <ContentControl
+                    x:Name="ReleaseVersionList"
+                    Margin="5"
+                    d:DataContext="{d:DesignData /SampleData/Versions.xaml}"
+                    Template="{StaticResource templateVersionList}" />
             </TabItem>
-            <TabItem Header="Beta" x:Name="BetaTab" Visibility="Collapsed">
-                <ContentControl x:Name="BetaVersionList" d:DataContext="{d:DesignData /SampleData/Versions.xaml}" Template="{StaticResource templateVersionList}" Margin="5" />
+            <TabItem
+                x:Name="BetaTab"
+                Header="Beta"
+                Visibility="Collapsed">
+                <ContentControl
+                    x:Name="BetaVersionList"
+                    Margin="5"
+                    d:DataContext="{d:DesignData /SampleData/Versions.xaml}"
+                    Template="{StaticResource templateVersionList}" />
             </TabItem>
-            <TabItem Header="Preview" x:Name="PreviewTab">
-                <ContentControl x:Name="PreviewVersionList" d:DataContext="{d:DesignData /SampleData/Versions.xaml}" Template="{StaticResource templateVersionList}" Margin="5" />
+            <TabItem x:Name="PreviewTab" Header="Preview">
+                <ContentControl
+                    x:Name="PreviewVersionList"
+                    Margin="5"
+                    d:DataContext="{d:DesignData /SampleData/Versions.xaml}"
+                    Template="{StaticResource templateVersionList}" />
             </TabItem>
-            <TabItem Header="Imported" x:Name="ImportedTab">
-                <ContentControl x:Name="ImportedVersionList" d:DataContext="{d:DesignData /SampleData/Versions.xaml}" Template="{StaticResource templateVersionList}" Margin="5" />
+            <TabItem x:Name="ImportedTab" Header="Imported">
+                <ContentControl
+                    x:Name="ImportedVersionList"
+                    Margin="5"
+                    d:DataContext="{d:DesignData /SampleData/Versions.xaml}"
+                    Template="{StaticResource templateVersionList}" />
             </TabItem>
         </TabControl>
 
-        <Grid Grid.Row="2" VerticalAlignment="Center" Margin="5,5,5,10">
+        <Grid
+            Grid.Row="3"
+            Margin="5,5,5,10"
+            VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <CheckBox Grid.Row="0" Grid.Column="0" Name="ShowInstalledVersionsOnlyCheckbox" Content="Show installed versions only" Checked="ShowInstalledVersionsOnlyCheckbox_Changed" Unchecked="ShowInstalledVersionsOnlyCheckbox_Changed" IsChecked="{Binding UserPrefs.ShowInstalledOnly }" />
-            <Grid Name="LoadingProgressGrid" Grid.Row="0" Grid.Column="2">
+            <CheckBox
+                Name="ShowInstalledVersionsOnlyCheckbox"
+                Grid.Row="0"
+                Grid.Column="0"
+                Checked="ShowInstalledVersionsOnlyCheckbox_Changed"
+                Content="Show installed versions only"
+                IsChecked="{Binding UserPrefs.ShowInstalledOnly}"
+                Unchecked="ShowInstalledVersionsOnlyCheckbox_Changed" />
+            <Grid
+                Name="LoadingProgressGrid"
+                Grid.Row="0"
+                Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Name="LoadingProgressLabel" Content="Nothing" Padding="0,0,0,0"/>
-                <ProgressBar Grid.Row="0" Grid.Column="1" Name="LoadingProgressBar" Width="100" Margin="5,0,0,0" Maximum="5" Value="4"/>
+                <Label
+                    Name="LoadingProgressLabel"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="0,0,0,0"
+                    Content="Nothing" />
+                <ProgressBar
+                    Name="LoadingProgressBar"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="100"
+                    Margin="5,0,0,0"
+                    Maximum="5"
+                    Value="4" />
             </Grid>
         </Grid>
     </Grid>

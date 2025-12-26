@@ -13,6 +13,7 @@ namespace MCLauncher
     using System.IO.Compression;
     using System.Linq;
     using System.Threading;
+    using System.Windows.Controls;
     using System.Windows.Data;
     using System.Xml.Linq;
     using Windows.ApplicationModel;
@@ -45,6 +46,7 @@ namespace MCLauncher
         private volatile int _userVersionDownloaderLoginTaskStarted;
         private volatile bool _hasLaunchTask = false;
         private volatile bool _hasGdkExtractTask = false;
+        private string _searchText = "";
 
         public MainWindow()
         {
@@ -69,7 +71,8 @@ namespace MCLauncher
             versionListViewRelease.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                e.Accepted = v.VersionType == VersionType.Release && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                e.Accepted = matchesSearch && v.VersionType == VersionType.Release && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewRelease.Source = _versions;
             ReleaseVersionList.DataContext = versionListViewRelease;
@@ -79,7 +82,8 @@ namespace MCLauncher
             versionListViewBeta.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                e.Accepted = v.VersionType == VersionType.Beta && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                e.Accepted = matchesSearch && v.VersionType == VersionType.Beta && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewBeta.Source = _versions;
             BetaVersionList.DataContext = versionListViewBeta;
@@ -89,7 +93,8 @@ namespace MCLauncher
             versionListViewPreview.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                e.Accepted = v.VersionType == VersionType.Preview && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                e.Accepted = matchesSearch && v.VersionType == VersionType.Preview && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewPreview.Source = _versions;
             PreviewVersionList.DataContext = versionListViewPreview;
@@ -99,7 +104,8 @@ namespace MCLauncher
             versionListViewImported.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                e.Accepted = v.VersionType == VersionType.Imported;
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                e.Accepted = matchesSearch && v.VersionType == VersionType.Imported;
             });
 
             versionListViewImported.Source = _versions;
@@ -1621,6 +1627,12 @@ namespace MCLauncher
             UserPrefs.ShowInstalledOnly = ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false;
             RefreshLists();
             RewritePrefs();
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _searchText = SearchBox.Text?.Trim() ?? "";
+            RefreshLists();
         }
 
         private void RefreshLists()
