@@ -37,12 +37,10 @@ This tool will **not** help you to pirate the game; it requires that you have a 
 
 The `bat/` folder contains ready-to-use build scripts:
 
-| Script | Description | Output Size | Requirements |
-|--------|-------------|-------------|--------------|
-| `build-release.bat` | Self-contained single EXE | ~150 MB | None |
-| `build-small.bat` | Framework-dependent EXE | ~20 MB | .NET Runtime |
-| `build-trimmed.bat` | Trimmed EXE (experimental) | ~100 MB | None |
-| `build-debug.bat` | Debug build | - | - |
+| Script | Description | Size | Notes |
+|--------|-------------|------|-------|
+| `build-release.bat` | Compressed single EXE | ~67 MB | Slower startup |
+| `build-release-uncompressed.bat` | Uncompressed single EXE | ~150 MB | Faster startup |
 | `clean.bat` | Clean artifacts | - | - |
 
 Scripts auto-detect target framework from `.csproj`.

@@ -2,8 +2,8 @@
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo   MCLauncher - Small EXE Build
-echo   (Framework-dependent - .NET required)
+echo   MCLauncher - Release Build
+echo   (Self-contained, No Compression)
 echo ========================================
 echo.
 
@@ -12,20 +12,17 @@ cd /d "%~dp0.."
 set "PROJECT_ROOT=%cd%"
 set "CSPROJ=MCLauncher\MCLauncher.csproj"
 
-:: Detect target framework from csproj
-for /f "tokens=2 delims=<>" %%a in ('findstr /i "TargetFramework" "%CSPROJ%"') do set "TFM=%%a"
-echo Detected Target Framework: %TFM%
-echo.
-
 echo [1/2] Cleaning...
 dotnet clean "%CSPROJ%" -c Release -v quiet
 
-echo [2/2] Building framework-dependent single file...
+echo [2/2] Building Release (uncompressed single file)...
 dotnet publish "%CSPROJ%" ^
     -c Release ^
     -r win-x64 ^
-    --self-contained false ^
-    /p:PublishSingleFile=true
+    --self-contained true ^
+    /p:PublishSingleFile=true ^
+    /p:IncludeNativeLibrariesForSelfExtract=true ^
+    /p:EnableCompressionInSingleFile=false
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
@@ -36,11 +33,12 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo ========================================
-echo   BUILD COMPLETE!
+echo   BUILD COMPLETE (Uncompressed)
 echo ========================================
 echo.
 
 :: Find output path
+for /f "tokens=2 delims=<>" %%a in ('findstr /i "<TargetFramework>" "%CSPROJ%"') do set "TFM=%%a"
 set "OUTPUT_DIR=MCLauncher\bin\Release\%TFM%\win-x64\publish"
 set "OUTPUT_EXE=%OUTPUT_DIR%\MCLauncher.exe"
 
@@ -48,17 +46,11 @@ if exist "%OUTPUT_EXE%" (
     echo Output file:
     echo   %PROJECT_ROOT%\%OUTPUT_EXE%
     echo.
-    
-    :: Show file size
     for %%A in ("%OUTPUT_EXE%") do (
         set /a "SIZE_MB=%%~zA / 1048576"
-        echo Size: !SIZE_MB! MB
+        echo Size: !SIZE_MB! MB (uncompressed - faster startup)
     )
-) else (
-    echo Output directory: %OUTPUT_DIR%
 )
 
-echo.
-echo NOTE: Target computer must have .NET Runtime installed!
 echo.
 pause

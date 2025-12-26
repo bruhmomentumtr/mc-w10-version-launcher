@@ -4,28 +4,19 @@ Build scripts for the MCLauncher project.
 
 ## Scripts
 
-| Script | Description | Output Size | Requirements |
-|--------|-------------|-------------|--------------|
-| `build-release.bat` | Self-contained single EXE | ~150-160 MB | None |
-| `build-small.bat` | Framework-dependent EXE | ~15-20 MB | .NET Runtime |
-| `build-trimmed.bat` | Trimmed single EXE | ~80-100 MB | None (risky) |
-| `build-debug.bat` | Debug build | - | - |
+| Script | Description | Size | Startup |
+|--------|-------------|------|---------|
+| `build-release.bat` | Compressed single EXE | ~67 MB | Slower |
+| `build-release-uncompressed.bat` | Uncompressed single EXE | ~150 MB | Faster |
 | `clean.bat` | Clean build artifacts | - | - |
 
 ## Usage
 
 1. Double-click any `.bat` file
 2. Wait for build to complete
-3. Output location will be displayed
-
-## Features
-
-- **Auto-detects target framework** from `.csproj`
-- **Shows file size** after build
-- **Portable** - works regardless of .NET version
+3. Output: `MCLauncher\bin\Release\...\publish\MCLauncher.exe`
 
 ## Notes
 
-- **build-release.bat**: Most reliable, works everywhere
-- **build-small.bat**: Smaller but requires .NET Runtime on target
-- **build-trimmed.bat**: Smallest but may have WPF/WinRT issues
+- **Compressed**: Smaller file, but slightly slower first startup
+- **Uncompressed**: Larger file, but faster startup
