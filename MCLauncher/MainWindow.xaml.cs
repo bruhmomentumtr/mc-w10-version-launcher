@@ -71,7 +71,7 @@ namespace MCLauncher
             versionListViewRelease.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.StartsWith(_searchText, StringComparison.OrdinalIgnoreCase);
                 e.Accepted = matchesSearch && v.VersionType == VersionType.Release && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewRelease.Source = _versions;
@@ -82,7 +82,7 @@ namespace MCLauncher
             versionListViewBeta.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.StartsWith(_searchText, StringComparison.OrdinalIgnoreCase);
                 e.Accepted = matchesSearch && v.VersionType == VersionType.Beta && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewBeta.Source = _versions;
@@ -93,7 +93,7 @@ namespace MCLauncher
             versionListViewPreview.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.StartsWith(_searchText, StringComparison.OrdinalIgnoreCase);
                 e.Accepted = matchesSearch && v.VersionType == VersionType.Preview && (v.IsInstalled || v.IsStateChanging || !(ShowInstalledVersionsOnlyCheckbox.IsChecked ?? false));
             });
             versionListViewPreview.Source = _versions;
@@ -104,7 +104,7 @@ namespace MCLauncher
             versionListViewImported.Filter += new FilterEventHandler((object sender, FilterEventArgs e) =>
             {
                 var v = e.Item as Version;
-                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+                bool matchesSearch = string.IsNullOrEmpty(_searchText) || v.Name.StartsWith(_searchText, StringComparison.OrdinalIgnoreCase);
                 e.Accepted = matchesSearch && v.VersionType == VersionType.Imported;
             });
 
