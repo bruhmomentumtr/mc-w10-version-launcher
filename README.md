@@ -10,6 +10,8 @@ This tool allows you to install multiple versions of Minecraft: Windows 10 Editi
 - ✅ **.NET 10** - Modern SDK-style project format
 - ✅ **Single EXE** - Single file output with `dotnet publish`
 - ✅ **GameStorageManager** - Downloads stored in `DownloadedMCAppx` folder
+- ✅ **Search Box** - Filter versions by name (prefix match)
+- ✅ **Auto Version Switch** - Automatically unregisters old version when launching new
 - ✅ **Improved UX** - Download/removal confirmation dialogs
 - ✅ **Version Detection** - Detects existing installations before download
 
